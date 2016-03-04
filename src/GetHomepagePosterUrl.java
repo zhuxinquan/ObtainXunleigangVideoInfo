@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 /**
+ * 获取当前页所有的海报链接地址和图片海报图片地址
  * Created by zhuxinquan on 16-3-3.
  */
 public class GetHomepagePosterUrl {
@@ -19,7 +20,7 @@ public class GetHomepagePosterUrl {
     public final static String PASSWD = "2737353904";
     public final static String Driver = "com.mysql.jdbc.Driver";
 
-    //保存海报Url
+    //保存电影的详情
     private List<VideoInfo> videoInfos = new LinkedList<>();
 
     GetHomepagePosterUrl(String url){
@@ -44,7 +45,7 @@ public class GetHomepagePosterUrl {
             formPost = m.group(0);
 //            System.out.println(formPost);
         }
-        //取得链接地址
+        //取得每一个海报块
         Pattern reg_link = Pattern.compile("<li style=\"width:150px;\">([\\s\\S]*?)</li>");
         Matcher m1 = reg_link.matcher(formPost);
         String infourl = null;
@@ -74,11 +75,13 @@ public class GetHomepagePosterUrl {
             String s = infoImg;
             Pattern p3 = Pattern.compile("data/attachment/.*jpg");
             Matcher m3 = p3.matcher(s);
+            //若海报图片链接不存在则不保存该电影信息
             if(m3.find()){
                 videoInfos.add(getInfo.getVideoInfo());
             }
             getInfo.getInfo();
         }
+        //将一个页面获取到的电影详情（25）依次存入数据库
         try {
             Class.forName(Driver);
             Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWD);
@@ -96,6 +99,8 @@ public class GetHomepagePosterUrl {
             e.printStackTrace();
         }
     }
+
+    //写入数据库操作
     public static void writeIntoDB(VideoInfo v, PreparedStatement ps){
         try {
             ps.setString(1, v.getName());

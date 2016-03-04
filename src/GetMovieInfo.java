@@ -161,6 +161,7 @@ public class GetMovieInfo {
         }
     }
 
+    //返回电影信息
     public VideoInfo getVideoInfo() {
         return videoInfo;
     }
